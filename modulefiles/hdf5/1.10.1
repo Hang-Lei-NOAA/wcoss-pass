@@ -1,0 +1,54 @@
+#%Module1.0###########################
+##
+## modules HDF5 -> version 1.10.1
+##
+######################################
+######################################
+##  BUILD NOTES
+######################################
+##
+## ./configure CC=icc CXX=icpc FC=ifort \
+#	--prefix=/apps/intel-2018/hdf5-1.10.1 \
+#	--enable-build-mode=production \
+#	--enable-fortran \
+#	--enable-cxx
+## make && make install
+##
+######################################
+
+proc ModulesHelp { } {
+        global version modroot
+
+        puts stderr "\tHDF5 - version 1.10.1"
+        puts stderr "\t"
+}
+
+module-whatis   "HDF5 - version 1.10.1"
+module-whatis   "HDF5 Data Model Library and"
+module-whatis   "file format for storing and managing data"
+module-whatis   "Built with the Intel 2018 compilers."
+
+# for Tcl script use only
+set     topdir          /apps/contrib/NCEPLIBS/orion/external/hdf5-1.10.1
+set     version         1.10.1
+set     sys             linux64
+
+prepend-path    PATH            $topdir/bin
+prepend-path    LD_LIBRARY_PATH $topdir/lib
+
+prepend-path    CPATH           $topdir/include
+prepend-path    LIBRARY_PATH    $topdir/lib
+
+setenv          HDF5_ROOT           $topdir
+setenv          HDF5_INCLUDE_DIRS   $topdir/include
+setenv          HDF5_LIBRARY_DIRS   $topdir/lib
+setenv          HDF5_INC   $topdir/include
+setenv          HDF5_LIB   $topdir/lib
+setenv  HDF5_FFLAGS             "-I$topdir/include"
+setenv  HDF5_CFLAGS             "-I$topdir/include"
+setenv  HDF5_CXXFLAGS           "-I$topdir/include"
+setenv  HDF5_LDFLAGS_F          "-L$topdir/lib -lhdf5_hl -lhdf5hl_fortran -lhdf5 -lhdf5_fortran"
+setenv  HDF5_LDFLAGS_C          "-L$topdir/lib -lhdf5_hl -lhdf5"
+setenv  HDF5_LDFLAGS_CXX        "-L$topdir/lib -lhdf5_hl -hdf5_hl_cpp -lhdf5 -lhdf5_cpp"
+setenv  HDF5_INCLUDE            "-I$topdir/include"
+setenv  HDF5_LDFLAGS            "-L$topdir/lib -lhdf5_hl -lhdf5hl_fortran -lhdf5 -lhdf5_fortran"

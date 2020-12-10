@@ -1,0 +1,53 @@
+#%Module######################################################################
+proc ModulesHelp { } {
+  puts "Set following 12 environment variables for grib utilities:"
+  puts "  CNVGRIB, COPYGB, COPYGB2, DEGRIB2, GRB2INDEX, GRBINDEX"
+  puts "  GRIB2GRIB, TOCGRIB, TOCGRIB2, TOCGRIB2SUPER, WGRIB, WGRIB2"
+}
+
+if { [ regexp {([^/]+)/([^/]+)/(\d+\.\d+\.\d+)$} [module-info name] -> dev_layer lname ver ] != 1 } {
+  global ModulesCurrentModulefile
+  if { [ regexp {([^/]+)/([^/]+)/(\d+\.\d+\.\d+)$} $ModulesCurrentModulefile -> dev_layer lname ver ] != 1 } {
+    puts stderr "Error: unable to parse module name and version from '$module_name'"
+    puts stderr "Module path:  $ModulesCurrentModulefile"
+    break
+  }
+}
+
+# Make sure another version of the same package is not already loaded
+conflict $lname
+
+# Determine the root directory of the module being loaded
+global ModulesCurrentModulefile
+if { [ regexp {^(.*)/modulefiles/.*$} $ModulesCurrentModulefile -> NCEPLIBS ] != 1 } {
+  puts stderr "Error: unable to determine library's root directory"
+  break
+}
+
+# Adjust $dev_layer for inserting to the paths
+if [string equal $dev_layer modulefiles] {
+  set dev_layer ""
+} else {
+  set dev_layer "/${dev_layer}"
+}
+
+# Set other necessary variables
+set dutil  $NCEPLIBS/utils
+set dexec  $dutil/${lname}.v$ver/exec
+set bname  [string toupper $lname]
+
+# Export environment variables
+setenv ${bname}_VER  v$ver
+setenv CNVGRIB       $dexec/cnvgrib
+setenv COPYGB        $dexec/copygb
+setenv COPYGB2       $dexec/copygb2
+setenv DEGRIB2       $dexec/degrib2
+setenv GRB2INDEX     $dexec/grb2index
+setenv GRBINDEX      $dexec/grbindex
+setenv GRIB2GRIB     $dexec/grib2grib
+setenv TOCGRIB       $dexec/tocgrib
+setenv TOCGRIB2      $dexec/tocgrib2
+setenv TOCGRIB2SUPER $dexec/tocgrib2super
+setenv WGRIB         $dexec/wgrib
+setenv WGRIB2        $dexec/wgrib2
+

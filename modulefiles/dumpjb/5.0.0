@@ -1,0 +1,63 @@
+#%Module ###########################################################
+##
+##        dumpjb v5.0.0
+##     updated on 10/24/2018
+##
+proc ModulesHelp { } {
+  puts "Set up environment for bufr utility script dumpjb\n"
+}
+
+# Obtain the package name and version
+if { [ regexp {([^/]+)/([^/]+)/(\d+\.\d+\.\d+)$} [module-info name] -> dev_layer lname ver ] != 1 } {
+  global ModulesCurrentModulefile
+  if { [ regexp {([^/]+)/([^/]+)/(\d+\.\d+\.\d+)$} $ModulesCurrentModulefile -> dev_layer lname ver ] != 1 } {
+    puts stderr "Error: unable to parse module name and version from '$module_name'"
+    puts stderr "Module path:  $ModulesCurrentModulefile"
+    break
+  }
+}
+
+# Make sure another version of the same package is not already loaded
+conflict $lname
+
+# Determine the root directory of the module being loaded
+global ModulesCurrentModulefile
+if { [ regexp {^(.*)/modulefiles/.*$} $ModulesCurrentModulefile -> NCEPLIBS ] != 1 } {
+  puts stderr "Error: unable to determine library's root directory"
+  break
+}
+
+# Adjust $dev_layer for inserting to the paths
+if [string equal $dev_layer modulefiles] {
+  set dev_layer ""
+} else {
+  set dev_layer "/${dev_layer}"
+}
+
+# Set other necessary variables
+set dutil     $NCEPLIBS/utils${dev_layer}
+set bname     [string toupper $lname]
+
+# Export environment variables
+setenv HOMEobsproc_dump  $dutil/obsproc_dump/${lname}.v$ver
+setenv obsproc_dump_ver  v$ver
+setenv ${bname}_VER      v$ver
+setenv $bname            $dutil/obsproc_dump/${lname}.v$ver/ush/$lname
+prepend-path PATH        $dutil/obsproc_dump/${lname}.v$ver/ush
+
+if { [module-info mode load] } {
+   if { ![info exists env(LIST)]
+     && ![info exists env(DFIX)]
+     && ![info exists env(HOMEobsproc_shared_bufr_dumplist)]
+     && ![info exists env(obsproc_shared_bufr_dumplist_ver)]} {
+        puts stderr "\n  Please remember to load a bufr_dumplist module"
+        puts stderr "                    -OR- "
+        puts stderr "  set one of the following environment variables in order for dumpjb to find the"
+        puts stderr "  bufr_dumplist file you want to use:"
+        puts stderr "     * LIST (pointer to specific bufr_dumplist file)"
+        puts stderr "     * DFIX (pointer to directory containing bufr_dumplist file)"
+        puts stderr "     * HOMEobsproc_shared_bufr_dumplist (directory containing fix/bufr_dumplist)"
+        puts stderr ""
+   }
+}
+

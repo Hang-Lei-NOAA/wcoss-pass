@@ -1,0 +1,49 @@
+#%Module######################################################################
+proc ModulesHelp { } {
+        puts stderr "Set environment veriables for ip"
+}
+
+if { [ regexp {([^/]+)/([^/]+)/(\d+\.\d+\.\d+)$} [module-info name] -> dev_layer lname ver ] != 1 } {
+  global ModulesCurrentModulefile
+  if { [ regexp {([^/]+)/([^/]+)/(\d+\.\d+\.\d+)$} $ModulesCurrentModulefile -> dev_layer lname ver ] != 1 } {
+    puts stderr "Error: unable to parse module name and version from '$module_name'"
+    puts stderr "Module path:  $ModulesCurrentModulefile"
+    break
+  }
+}
+
+# Make sure another version of the same package is not already loaded
+conflict $lname
+
+# Determine the root directory of the module being loaded
+global ModulesCurrentModulefile
+if { [ regexp {^(.*)/modulefiles/.*$} $ModulesCurrentModulefile -> NCEPLIBS ] != 1 } {
+  puts stderr "Error: unable to determine library's root directory"
+  break
+}
+
+# Adjust $dev_layer for inserting to the paths
+if [string equal $dev_layer modulefiles] {
+  set dev_layer ""
+} else {
+  set dev_layer "/${dev_layer}"
+}
+
+# Set other necessary variables
+set dlib   $NCEPLIBS/lib
+set dinc   $NCEPLIBS/include
+set dsrc   $NCEPLIBS/src${dev_layer}
+set bname  [string toupper $lname]
+
+# Export environment variables
+setenv ${bname}_VER  v$ver
+setenv ${bname}_SRC  $dsrc/${lname}_v${ver}
+setenv ${bname}_LIB4 $dlib/lib${lname}_v${ver}_4.a
+setenv ${bname}_LIB8 $dlib/lib${lname}_v${ver}_8.a
+setenv ${bname}_LIBd $dlib/lib${lname}_v${ver}_d.a
+setenv ${bname}_INC4 $dinc/${lname}_v${ver}_4
+setenv ${bname}_INC8 $dinc/${lname}_v${ver}_8
+setenv ${bname}_INCd $dinc/${lname}_v${ver}_d
+setenv LIB_NAME      ${bname}
+
+

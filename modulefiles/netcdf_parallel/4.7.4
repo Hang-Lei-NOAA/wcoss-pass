@@ -1,0 +1,69 @@
+#%Module1.0###########################
+##
+## modules netcdf-> version 4.7.4-parallel
+##
+######################################
+######################################
+##  BUILD NOTES
+######################################
+## 
+## Depends on intel/2018 and HDF5/1.10.6-parallel
+##
+##
+## ./configure CC=mpiicc CXX=mpiicpc FC=mpiifort \
+##
+## make && make install
+
+proc ModulesHelp { } {
+        global version modroot
+
+        puts stderr "\tnetcdf - version 4.7.4-parallel"
+        puts stderr "\tbuilt with intel mpi and hdf5-parallel"
+}
+
+module-whatis   "NetCDF is a set of software libraries "
+module-whatis   "and self-describing, machine-independent "
+module-whatis   "data formats that support the creation, "
+module-whatis   "access, and sharing of array-oriented "
+module-whatis   "scientific data. Parallel build, built with intel mpi and hdf5-parallel"
+
+# Dependencies in TCL Format
+if { [ module-info mode load ] } {
+   module load hdf5_parallel/1.10.6
+}
+
+# for Tcl script use only
+set     topdir          /apps/contrib/NCEPLIBS/orion/external/netcdf_para_4.7.4
+set     version         4.7.4
+set     sys             linux64
+
+prepend-path    PATH            $topdir/bin
+prepend-path    MANPATH         $topdir/share/man
+prepend-path    LD_LIBRARY_PATH $topdir/lib
+
+setenv          NETCDF          $topdir
+
+prepend-path    CPATH           $topdir/include
+prepend-path    LIBRARY_PATH    $topdir/lib
+
+setenv          NETCDF_ROOT           $topdir
+setenv          NETCDF_VERSION        $version
+setenv          NETCDF_INC            $topdir/include
+setenv          NETCDF_LIB            $topdir/lib
+setenv  NETCDF_FFLAGS           "-I$topdir/include"
+setenv  NETCDF_CFLAGS           "-I$topdir/include"
+setenv  NETCDF_CXXFLAGS         "-I$topdir/include"
+setenv  NETCDF_CXX4FLAGS                "-I$topdir/include"
+
+setenv  NETCDF_LDFLAGS_F        "-L$topdir/lib -lnetcdff"
+setenv  NETCDF_LDFLAGS_C        "-L$topdir/lib -lnetcdf"
+setenv  NETCDF_LDFLAGS_CXX      "-L$topdir/lib -lnetcdf -lnetcdf_c++"
+setenv  NETCDF_LDFLAGS_CXX4     "-L$topdir/lib -lnetcdf -lnetcdf_c++4"
+
+setenv  NETCDF_INCLUDE         "-I$topdir/include"
+setenv  NETCDF_LDFLAGS         "-L$topdir/lib -lnetcdff"
+
+
+
+
+

@@ -1,0 +1,18 @@
+#%Module######################################################################
+##
+##      ESMF 8.0.0 for Intel on Hera
+##      Installed by:  (esmf@noaa.gov)
+
+proc ModulesHelp { } {
+        puts stderr "Sets up the ESMF 8.0.0 library"
+}
+
+prereq intel
+prereq impi
+prereq netcdf/4.7.2-parallel
+
+setenv              ESMFMKFILE      "/apps/contrib/NCEPLIBS/orion/lib/esmf8.0.0-intel2018-impi2018-netcdf4.7.4_parallel/esmf.mk"
+prepend-path        PATH            "/apps/contrib/NCEPLIBS/orion/include/esmf8.0.0-intel2018-impi2018-netcdf4.7.4_parallel/bin"
+prepend-path        LD_LIBRARY_PATH "/apps/contrib/NCEPLIBS/orion/lib/esmf8.0.0-intel2018-impi2018-netcdf4.7.4_parallel"
+prepend-path        ESMFMOD         "/apps/contrib/NCEPLIBS/orion/include/esmf8.0.0-intel2018-impi2018-netcdf4.7.4_parallel/mod"
+prepend-path        ESMFINC         "/apps/contrib/NCEPLIBS/orion/include/esmf8.0.0-intel2018-impi2018-netcdf4.7.4_parallel"

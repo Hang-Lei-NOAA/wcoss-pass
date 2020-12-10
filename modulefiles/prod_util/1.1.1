@@ -1,0 +1,52 @@
+#%Module######################################################################
+proc ModulesHelp { } {
+        puts stderr "Set environment veriables for prod_util"
+}
+
+if { [ regexp {([^/]+)/([^/]+)/(\d+\.\d+\.\d+)$} [module-info name] -> dev_layer lname ver ] != 1 } {
+  global ModulesCurrentModulefile
+  if { [ regexp {([^/]+)/([^/]+)/(\d+\.\d+\.\d+)$} $ModulesCurrentModulefile -> dev_layer lname ver ] != 1 } {
+    puts stderr "Error: unable to parse module name and version from '$module_name'"
+    puts stderr "Module path:  $ModulesCurrentModulefile"
+    break
+  }
+}
+
+# Make sure another version of the same package is not already loaded
+conflict $lname
+
+# Determine the root directory of the module being loaded
+global ModulesCurrentModulefile
+if { [ regexp {^(.*)/modulefiles/.*$} $ModulesCurrentModulefile -> NCEPLIBS ] != 1 } {
+  puts stderr "Error: unable to determine library's root directory"
+  break
+}
+
+# Adjust $dev_layer for inserting to the paths
+if [string equal $dev_layer modulefiles] {
+  set dev_layer ""
+} else {
+  set dev_layer "/${dev_layer}"
+}
+
+# Set other necessary variables
+set dutil  $NCEPLIBS/utils
+set dhome  $dutil/${lname}.v$ver
+set dexec  $dhome/exec
+set dush   $dhome/ush
+set bname  [string toupper $lname]
+
+# Export environment variables
+setenv ${bname}_VER  v$ver
+setenv UTILROOT      $dhome
+setenv MDATE         $dexec/mdate
+setenv NDATE         $dexec/ndate
+setenv NHOUR         $dexec/nhour
+setenv FSYNC         $dexec/fsync_file
+setenv COMDATEROOT   "N/A on Orion"
+setenv COMLISTROOT   $dhome/save/config
+
+prepend-path PATH       $dush
+prepend-path PYTHONPATH $dush
+
+
